@@ -8,16 +8,23 @@ function App() {
     }
     return emptyArray;
   }
+
   emptyArray = initArray(emptyArray);
 
   let [playerMovesArray, setPlayerMovesArray] = useState(emptyArray);
   let [position, setPosition] = useState(1);
   let [gamePiece, setGamePiece] = useState("X");
+  let [isGameOver, setIsGameOver] = useState(false);
   // let [computerThinking, setComputerThinking] = useState(false);
   let computerThinking = false;
   /* 
   // 
   */
+ function handleGameResetSubmit() {
+
+  console.log("Game Reset");
+
+ }
 
   function handleSubmit(e) {
     e.preventDefault();
@@ -89,6 +96,7 @@ function App() {
       let winningMessage = `${tempToken} wins!`;
       console.log(winningMessage);
       alert(winningMessage);
+      setIsGameOver(true);
       return;
     };
     setPosition("");
@@ -101,7 +109,10 @@ function App() {
     // How to deal with full array no moves left? array.includes(value)
     //TODO: this should no longer be necessary as we check for open moves in After X move
     if (isBoardFull(newArray)) {
-      console.log("Board is Full, Cat's Game")
+      let message = "Board is Full, Cat's Game";
+      alert(message)
+      console.log(message);
+      setIsGameOver(true);
       return;
     } else{
       // O players turn (computer)
@@ -133,6 +144,7 @@ function App() {
       let winningMessage = `${tempToken} wins!`;
       console.log(winningMessage);
       alert(winningMessage);
+      setIsGameOver(true);
       return;
     };
     setGamePiece(tempToken === "X" ? "O" : "X"); 
@@ -153,6 +165,7 @@ function App() {
         <p>{row2}</p>
         <p>{row3}</p>
       </div>
+      {(!isGameOver) ? 
       <div id="playerConsole">
         <h2>playerConsole</h2>
         <p>It's {gamePiece}'s move. {!computerThinking ? "" : "Computer Thinking"} </p>
@@ -167,6 +180,12 @@ function App() {
           <button>End Turn</button>
         </form>
       </div>
+      : 
+      <div id="gameOver"> 
+        <h2>GameOver</h2>
+        <button onClick={handleGameResetSubmit}>Reset Game, Play Again?</button>
+      </div>
+      }
     </div>
   );
 }
