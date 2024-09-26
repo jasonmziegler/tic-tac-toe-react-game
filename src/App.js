@@ -86,7 +86,9 @@ function App() {
     newArray[index] = tempToken;
     setPlayerMovesArray(newArray);
     if (isWinner(tempToken, newArray)) {
-      console.log(`${tempToken} wins!`);
+      let winningMessage = `${tempToken} wins!`;
+      console.log(winningMessage);
+      alert(winningMessage);
       return;
     };
     setPosition("");
@@ -128,7 +130,9 @@ function App() {
     // check win condition
     // check if any valid moves
     if (isWinner(tempToken, newArray)) {
-      console.log(`${tempToken} wins!`);
+      let winningMessage = `${tempToken} wins!`;
+      console.log(winningMessage);
+      alert(winningMessage);
       return;
     };
     setGamePiece(tempToken === "X" ? "O" : "X"); 
