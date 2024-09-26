@@ -1,28 +1,19 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 function App() {
   let emptyArray = []
   function initArray(emptyArray) {
     for (let i=0; i<9; i++) {
-      emptyArray.push(undefined);
+      emptyArray.push("-");
     }
     return emptyArray;
   }
   emptyArray = initArray(emptyArray);
 
   let [playerMovesArray, setPlayerMovesArray] = useState(emptyArray);
-  let [row1, setRow1] = useState("");
-  let [row2, setRow2] = useState("");
-  let [row3, setRow3] = useState("");
   let [position, setPosition] = useState(0);
   let [gamePiece, setGamePiece] = useState("O");
-  console.log(playerMovesArray);
   
-  useEffect( () => {
-    setRow1(toString(playerMovesArray[0]) + " " + toString(playerMovesArray[1]) + " " + toString(playerMovesArray[2]));
-  setRow2(toString(playerMovesArray[3]) + " " + toString(playerMovesArray[4]) + " " + toString(playerMovesArray[5]));
-  setRow3(toString(playerMovesArray[6]) + " " + toString(playerMovesArray[7]) + " " + toString(playerMovesArray[8]));
-  }, [playerMovesArray]);
 
   function handleSubmit(e) {
     e.preventDefault();
@@ -33,8 +24,15 @@ function App() {
 
     newArray.splice(index, 1, gamePiece);
     setPlayerMovesArray(newArray);
+    setPosition(0);
+    setGamePiece(gamePiece === "X" ? "O" : "X");
   }
-  
+
+  const row1 = playerMovesArray.slice(0,3).join(" ");
+  const row2 = playerMovesArray.slice(3,6).join(" ");
+  const row3 = playerMovesArray.slice(6,9).join(" ");
+  console.log(playerMovesArray);
+
   return (
     <div className="App">
       <header>
