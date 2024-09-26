@@ -15,9 +15,13 @@ function App() {
   let [gamePiece, setGamePiece] = useState("X");
   // let [computerThinking, setComputerThinking] = useState(false);
   let computerThinking = false;
+  /* 
+  // 
+  */
 
   function handleSubmit(e) {
     e.preventDefault();
+    // check if winning board
     function isWinner(currentPlayer, movesArray) {
       if (movesArray[0] === currentPlayer && movesArray[1] === currentPlayer && movesArray[2] ===currentPlayer) {
         //top row win
@@ -55,6 +59,10 @@ function App() {
         return false;
       }
     }
+    // determine if Cat's Game
+    function isBoardFull(moveArray) {
+      return(!moveArray.includes("-"));
+    }
     let newArray = [...playerMovesArray];
     console.log("Form Submitted, Player played a turn");
     let index = position - 1;
@@ -77,6 +85,10 @@ function App() {
     //newArray.splice(index, 1, gamePiece);
     newArray[index] = tempToken;
     setPlayerMovesArray(newArray);
+    if (isWinner(tempToken, newArray)) {
+      console.log(`${tempToken} wins!`);
+      return;
+    };
     setPosition("");
     // TODO: check win condition
     // if no win condition check for valids "Cat's Game"
@@ -86,7 +98,10 @@ function App() {
     tempToken = (tempToken === "X") ? "O" : "X";
     // How to deal with full array no moves left? array.includes(value)
     //TODO: this should no longer be necessary as we check for open moves in After X move
-    if (newArray.includes("-")) {
+    if (isBoardFull(newArray)) {
+      console.log("Board is Full, Cat's Game")
+      return;
+    } else{
       // O players turn (computer)
       // TODO: remove and then reuse the position variable
       computerThinking = true;
@@ -108,13 +123,15 @@ function App() {
           computerThinking = false;
         }
       }   
-    } else {
-      console.log("No moves left")
-    }
+    } 
     setPlayerMovesArray(newArray);
-    setGamePiece(tempToken === "X" ? "O" : "X"); 
     // check win condition
     // check if any valid moves
+    if (isWinner(tempToken, newArray)) {
+      console.log(`${tempToken} wins!`);
+      return;
+    };
+    setGamePiece(tempToken === "X" ? "O" : "X"); 
   }
 
   const row1 = playerMovesArray.slice(0,3).join(" ");
