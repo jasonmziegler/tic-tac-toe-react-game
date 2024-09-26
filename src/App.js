@@ -11,8 +11,8 @@ function App() {
   emptyArray = initArray(emptyArray);
 
   let [playerMovesArray, setPlayerMovesArray] = useState(emptyArray);
-  let [position, setPosition] = useState(0);
-  let [gamePiece, setGamePiece] = useState("O");
+  let [position, setPosition] = useState(1);
+  let [gamePiece, setGamePiece] = useState("X");
   
 
   function handleSubmit(e) {
@@ -20,11 +20,26 @@ function App() {
 
     console.log("Form Submitted, Player played a turn");
     let index = position - 1;
+
+    // check for valid input
+    if (position < 0 || position > 9 ) {
+      alert("Please choose position 1 - 9");
+      setPosition("");
+      return;
+    }
+
+    if (playerMovesArray[index] !== "-") {
+      alert("Space taken, please choose and empty space.");
+      setPosition("");
+      return;
+    }
     let newArray = [...playerMovesArray];
 
-    newArray.splice(index, 1, gamePiece);
+    // don't need splice can just set array directly with index
+    //newArray.splice(index, 1, gamePiece);
+    newArray[index] = gamePiece;
     setPlayerMovesArray(newArray);
-    setPosition(0);
+    setPosition("");
     setGamePiece(gamePiece === "X" ? "O" : "X");
   }
 
@@ -45,6 +60,7 @@ function App() {
       </div>
       <div id="playerConsole">
         <h2>playerConsole</h2>
+        <p>It's {gamePiece}'s move. </p>
         <form onSubmit={handleSubmit}>
           <label htmlFor="position">Position 1-9</label>
           <input 
@@ -52,13 +68,6 @@ function App() {
           value={position}
           id="position"
           onChange={(e) => setPosition(e.target.value)}
-          />
-          <label htmlFor="gamePiece">gamePiece 1-9</label>
-          <input 
-          type="text"
-          value={gamePiece}
-          id="gamePiece"
-          onChange={(e) => setGamePiece(e.target.value)}
           />
           <button>End Turn</button>
         </form>
