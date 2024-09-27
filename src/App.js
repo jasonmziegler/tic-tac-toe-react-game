@@ -1,5 +1,10 @@
 import { useState } from "react";
 
+import Header from "./components/Header";
+import GameBoard from "./components/GameBoard";
+import PlayerConsole from "./components/PlayerConsole";
+import GameOver from "./components/GameOver";
+
 function App() {
  
   function initArray(emptyArray) {
@@ -152,41 +157,21 @@ function App() {
     setGamePiece(tempToken === "X" ? "O" : "X"); 
   }
 
-  const row1 = playerMovesArray.slice(0,3).join(" ");
-  const row2 = playerMovesArray.slice(3,6).join(" ");
-  const row3 = playerMovesArray.slice(6,9).join(" ");
-  console.log(playerMovesArray);
-
+  
   return (
     <div className="App">
-      <header>
-        <h1>Tic Tac Toe React Game</h1>
-      </header>
-      <div id="gameBoard">
-        <p>{row1}</p>
-        <p>{row2}</p>
-        <p>{row3}</p>
-      </div>
+      <Header />
+      <GameBoard playerMovesArray={playerMovesArray}/>
       {(!isGameOver) ? 
-      <div id="playerConsole">
-        <h2>playerConsole</h2>
-        <p>It's {gamePiece}'s move. {!computerThinking ? "" : "Computer Thinking"} </p>
-        <form onSubmit={handleSubmit}>
-          <label htmlFor="position">Position 1-9</label>
-          <input 
-          type="text"
-          value={position}
-          id="position"
-          onChange={(e) => setPosition(e.target.value)}
-          />
-          <button>End Turn</button>
-        </form>
-      </div>
+        <PlayerConsole 
+        gamePiece={gamePiece}
+        computerThinking={computerThinking}
+        handleSubmit={handleSubmit}
+        position={position}
+        setPosition={setPosition}
+        />
       : 
-      <div id="gameOver"> 
-        <h2>GameOver</h2>
-        <button onClick={handleGameResetSubmit}>Reset Game, Play Again?</button>
-      </div>
+        <GameOver handleGameResetSubmit={handleGameResetSubmit} />
       }
     </div>
   );
