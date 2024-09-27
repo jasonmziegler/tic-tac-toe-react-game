@@ -33,50 +33,78 @@ function App() {
   setIsGameOver(false);
  }
 
+  function isWinner(currentPlayer, movesArray) {
+    if (movesArray[0] === currentPlayer && movesArray[1] === currentPlayer && movesArray[2] ===currentPlayer) {
+      //top row win
+      console.log("top row win");
+      return true;
+    } else if (movesArray[0] === currentPlayer && movesArray[3] === currentPlayer && movesArray[6] ===currentPlayer) {
+      //left col win
+      console.log("left col win");
+      return true;
+    } else if (movesArray[0] === currentPlayer && movesArray[4] === currentPlayer && movesArray[8] ===currentPlayer) {
+      // top left diagonal win \
+      console.log("top left diagonal win \ ");
+      return true;
+    } else if (movesArray[1] === currentPlayer && movesArray[4] === currentPlayer && movesArray[7] ===currentPlayer) {
+      // middle column win
+      console.log("middle column win");
+      return true;
+    } else if (movesArray[2] === currentPlayer && movesArray[5] === currentPlayer && movesArray[8] ===currentPlayer) {
+      //right col win
+      console.log("right col win");
+      return true;
+    } else if (movesArray[3] === currentPlayer && movesArray[4] === currentPlayer && movesArray[5] ===currentPlayer) {
+      //middle row win
+      console.log("middle row win");
+      return true;
+    } else if (movesArray[6] === currentPlayer && movesArray[7] === currentPlayer && movesArray[8] ===currentPlayer) {
+      //bottom row win
+      console.log("bottom row win");
+      return true;
+    } else if (movesArray[6] === currentPlayer && movesArray[4] === currentPlayer && movesArray[2] ===currentPlayer) {
+      // bottom left diagonal win /
+      console.log("bottom left diagonal win /");
+      return true;
+    } else {
+      return false;
+    }
+  }
+  function isBoardFull(moveArray) {
+    return(!moveArray.includes("-"));
+  }
+  
+  function makeComputerMove(newArray, tempToken) {
+    computerThinking = true;
+      // while computerThinking true calculate positions?
+      while (computerThinking) {
+
+        
+          // computer chooses a random position
+        position = Math.floor(Math.random() * 9);
+        console.log(position);
+        let index = position;
+        // simulate computer thinking
+        setTimeout(100);
+
+        //check if position is empty 
+        console.log("computer choice: ",newArray[index])
+        if (newArray[index] === "-") {
+          // if empty update position with gamepiece
+          newArray[index] = tempToken; 
+          // set computer thinking to false / break while loop
+          computerThinking = false;
+        }
+      }   
+      return newArray;
+  }
+
   function handleSubmit(e) {
     e.preventDefault();
     // check if winning board
-    function isWinner(currentPlayer, movesArray) {
-      if (movesArray[0] === currentPlayer && movesArray[1] === currentPlayer && movesArray[2] ===currentPlayer) {
-        //top row win
-        console.log("top row win");
-        return true;
-      } else if (movesArray[0] === currentPlayer && movesArray[3] === currentPlayer && movesArray[6] ===currentPlayer) {
-        //left col win
-        console.log("left col win");
-        return true;
-      } else if (movesArray[0] === currentPlayer && movesArray[4] === currentPlayer && movesArray[8] ===currentPlayer) {
-        // top left diagonal win \
-        console.log("top left diagonal win \ ");
-        return true;
-      } else if (movesArray[1] === currentPlayer && movesArray[4] === currentPlayer && movesArray[7] ===currentPlayer) {
-        // middle column win
-        console.log("middle column win");
-        return true;
-      } else if (movesArray[2] === currentPlayer && movesArray[5] === currentPlayer && movesArray[8] ===currentPlayer) {
-        //right col win
-        console.log("right col win");
-        return true;
-      } else if (movesArray[3] === currentPlayer && movesArray[4] === currentPlayer && movesArray[5] ===currentPlayer) {
-        //middle row win
-        console.log("middle row win");
-        return true;
-      } else if (movesArray[6] === currentPlayer && movesArray[7] === currentPlayer && movesArray[8] ===currentPlayer) {
-        //bottom row win
-        console.log("bottom row win");
-        return true;
-      } else if (movesArray[6] === currentPlayer && movesArray[4] === currentPlayer && movesArray[2] ===currentPlayer) {
-        // bottom left diagonal win /
-        console.log("bottom left diagonal win /");
-        return true;
-      } else {
-        return false;
-      }
-    }
+    
     // determine if Cat's Game
-    function isBoardFull(moveArray) {
-      return(!moveArray.includes("-"));
-    }
+    
     let newArray = [...playerMovesArray];
     console.log("Form Submitted, Player played a turn");
     let index = position - 1;
@@ -124,25 +152,7 @@ function App() {
     } else{
       // O players turn (computer)
       // TODO: remove and then reuse the position variable
-      computerThinking = true;
-      // while computerThinking true calculate positions?
-      while (computerThinking) {
-          // computer chooses a random position
-        position = Math.floor(Math.random() * 9);
-        console.log(position);
-        index = position;
-        // simulate computer thinking
-        setTimeout(100);
-
-        //check if position is empty 
-        console.log("computer choice: ",newArray[index])
-        if (newArray[index] === "-") {
-          // if empty update position with gamepiece
-          newArray[index] = tempToken; 
-          // set computer thinking to false / break while loop
-          computerThinking = false;
-        }
-      }   
+      newArray = makeComputerMove(newArray, tempToken);
     } 
     setPlayerMovesArray(newArray);
     // check win condition
