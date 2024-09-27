@@ -1,7 +1,7 @@
 import { useState } from "react";
 
 function App() {
-  let emptyArray = []
+ 
   function initArray(emptyArray) {
     for (let i=0; i<9; i++) {
       emptyArray.push("-");
@@ -9,7 +9,7 @@ function App() {
     return emptyArray;
   }
 
-  emptyArray = initArray(emptyArray);
+  let emptyArray = initArray([]);
 
   let [playerMovesArray, setPlayerMovesArray] = useState(emptyArray);
   let [position, setPosition] = useState(1);
@@ -21,9 +21,11 @@ function App() {
   // 
   */
  function handleGameResetSubmit() {
-
   console.log("Game Reset");
-
+  setPlayerMovesArray(initArray([]));
+  setGamePiece("X");
+  setPosition("");
+  setIsGameOver(false);
  }
 
   function handleSubmit(e) {
