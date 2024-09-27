@@ -14,12 +14,18 @@ function App() {
     return emptyArray;
   }
 
-  let emptyArray = initArray([]);
+  // let emptyArray = initArray([]);
 
-  let [playerMovesArray, setPlayerMovesArray] = useState(emptyArray);
-  let [position, setPosition] = useState(1);
-  let [gamePiece, setGamePiece] = useState("X");
-  let [isGameOver, setIsGameOver] = useState(false);
+  const [gameState, setGameState] = useState({
+    playerMovesArray: initArray([]),
+    gamePiece: "X",
+    position: "",
+    isGameOver: false,
+  })
+  // const [playerMovesArray, setPlayerMovesArray] = useState(emptyArray);
+  // const [position, setPosition] = useState(1);
+  // const [gamePiece, setGamePiece] = useState("X");
+  // const [isGameOver, setIsGameOver] = useState(false);
   // let [computerThinking, setComputerThinking] = useState(false);
   let computerThinking = false;
   /* 
@@ -27,10 +33,16 @@ function App() {
   */
  function handleGameResetSubmit() {
   console.log("Game Reset");
-  setPlayerMovesArray(initArray([]));
-  setGamePiece("X");
-  setPosition("");
-  setIsGameOver(false);
+  // setPlayerMovesArray(initArray([]));
+  // setGamePiece("X");
+  // setPosition("");
+  // setIsGameOver(false);
+  setGameState(({
+    playerMovesArray: initArray([]),
+    gamePiece: "X",
+    position: "",
+    isGameOver: false,
+  }));
  }
 
   function isWinner(currentPlayer, movesArray) {
@@ -77,13 +89,14 @@ function App() {
   function makeComputerMove(newArray, tempToken) {
     computerThinking = true;
       // while computerThinking true calculate positions?
+      let index;
       while (computerThinking) {
 
         
           // computer chooses a random position
-        position = Math.floor(Math.random() * 9);
-        console.log(position);
-        let index = position;
+        index = Math.floor(Math.random() * 9);
+        console.log(index);
+        // index = position;
         // simulate computer thinking
         setTimeout(100);
 
@@ -105,37 +118,59 @@ function App() {
     
     // determine if Cat's Game
     
-    let newArray = [...playerMovesArray];
+    let newArray = [...gameState.playerMovesArray];
     console.log("Form Submitted, Player played a turn");
-    let index = position - 1;
-    let tempToken = gamePiece;
+    let index = gameState.position - 1;
+    let tempToken = gameState.gamePiece;
 
     // check for valid input
-    if (position < 0 || position > 9 ) {
+    if (index < 0 || index > 8 ) {
       alert("Please choose position 1 - 9");
-      setPosition("");
+      // setPosition("");
+      setGameState(prevState => ({
+        ...prevState,
+        position: "",
+      }));
+      
       return;
     }
 
     if (newArray[index] !== "-") {
       alert("Space taken, please choose and empty space.");
-      setPosition("");
+      // setPosition("");
+      setGameState(prevState => ({
+        ...prevState,
+        position: "",
+      }));
       return;
     }
     
     // don't need splice can just set array directly with index
     //newArray.splice(index, 1, gamePiece);
     newArray[index] = tempToken;
-    setPlayerMovesArray(newArray);
+    // setPlayerMovesArray(newArray);
+    setGameState(prevState => ({
+      ...prevState,
+      playerMovesArray: newArray,
+    }))
     if (isWinner(tempToken, newArray)) {
       let winningMessage = `${tempToken} wins!`;
       console.log(winningMessage);
       alert(winningMessage);
-      setIsGameOver(true);
+      // setIsGameOver(true);
+      setGameState(prevState => ({
+        ...prevState,
+        isGameOver: true,
+      }))
       return;
     };
-    setPosition("");
-    // TODO: check win condition
+    // setPosition("");
+    setGameState(prevState => ({
+      ...prevState,
+      position: "",
+    }))
+    // TODO: Consider on setGameState a the end of this function
+    //  check win condition
     // if no win condition check for valids "Cat's Game"
     // if open move and no win condition
     // switch players
@@ -147,38 +182,56 @@ function App() {
       let message = "Board is Full, Cat's Game";
       alert(message)
       console.log(message);
-      setIsGameOver(true);
+      // setIsGameOver(true);
+      setGameState(prevState => ({
+        prevState,
+        isGameOver: true,
+      }));
       return;
     } else{
       // O players turn (computer)
       // TODO: remove and then reuse the position variable
       newArray = makeComputerMove(newArray, tempToken);
     } 
-    setPlayerMovesArray(newArray);
+    // setPlayerMovesArray(newArray);
+    setGameState(prevState => ({
+      ...prevState,
+      playerMovesArray: newArray,
+    }));
     // check win condition
     // check if any valid moves
     if (isWinner(tempToken, newArray)) {
       let winningMessage = `${tempToken} wins!`;
       console.log(winningMessage);
       alert(winningMessage);
-      setIsGameOver(true);
+      // setIsGameOver(true);
+      setGameState(prevState => ({
+        prevState,
+        isGameOver: true,
+      }));
       return;
     };
-    setGamePiece(tempToken === "X" ? "O" : "X"); 
+    // setGamePiece(tempToken === "X" ? "O" : "X"); 
+    setGameState(prevState=>({
+      ...prevState,
+      gamePiece: tempToken === "X" ? "O" : "X",
+    }))
   }
 
   
   return (
     <div className="App">
       <Header />
-      <GameBoard playerMovesArray={playerMovesArray}/>
-      {(!isGameOver) ? 
+      <GameBoard playerMovesArray={gameState.playerMovesArray}/>
+      {(!gameState.isGameOver) ? 
         <PlayerConsole 
-        gamePiece={gamePiece}
+        // gamePiece={gamePiece}
+        // position={position}
+        // setPosition={setPosition}
+        gameState={gameState}
+        setGameState={setGameState}
         computerThinking={computerThinking}
         handleSubmit={handleSubmit}
-        position={position}
-        setPosition={setPosition}
         />
       : 
         <GameOver handleGameResetSubmit={handleGameResetSubmit} />
