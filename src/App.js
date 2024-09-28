@@ -16,8 +16,6 @@ function App() {
     return emptyArray;
   }
 
-  // let emptyArray = initArray([]);
-
   const [gameState, setGameState] = useState({
     playerMovesArray: initArray([]),
     gamePiece: "X",
@@ -81,16 +79,14 @@ function App() {
   function isCellEmpty(index) {
     return (gameState.playerMovesArray[index] === "-") ?  true :  false;
   }
+
   function isBoardFull(updatedArray) {
     return(!updatedArray.includes("-"));
   }
   
   function updateCell(index) {
-    //
     let newArray = [...gameState.playerMovesArray];
-
     newArray[index] = gameState.gamePiece;
-    
     return newArray;
   }
   function switchPlayers(tempToken) {
@@ -117,12 +113,31 @@ function App() {
       }   
       return newArray;
   }
+  function isEndGame(updatedArray, newGamePiece) {
+    let message = "";
+    let isGameOver;
+    if (isWinner(newGamePiece, updatedArray)) {
+      // console.log(`${gameState.gamePiece} wins!`);
+      message = `${newGamePiece} wins!`;
+      // declare winner
+      isGameOver =  true;
+    } else if (isBoardFull(updatedArray)) { // else if check board full
+      // declare Cat's Game
+      message = "Board is Full, Cat's Game";
+      // alert(message);
+      // console.log(message);
+      isGameOver = true;
+    } else {
+      isGameOver = false;
+    }
+    return {message: message, isGameOver: isGameOver};
+  }
 
   function handeCellClick(input) {
     console.log(input);
     let message = "";
     if (isCellEmpty(input)) {
-      const updatedArray = updateCell(input);
+      let updatedArray = updateCell(input);
       let newGamePiece = gameState.gamePiece;
       let isGameOver = false;
       //check for winner
@@ -140,6 +155,11 @@ function App() {
       } else {
         // else switch players
         newGamePiece = switchPlayers(newGamePiece);
+        // computer's Move
+        updatedArray = makeComputerMove(updatedArray, newGamePiece);
+        let result = isEndGame(updatedArray,newGamePiece);
+        message = result.message;
+        isGameOver = result.isGameOver;
       }
       // set state all at once
       setGameState((prevState) => ({
@@ -171,7 +191,6 @@ function App() {
           gameState={gameState}
           setGameState={setGameState}
           computerThinking={computerThinking}
-          // handleSubmit={handleSubmit}
           />
         : 
           <GameOver handleGameResetSubmit={handleGameResetSubmit} />
