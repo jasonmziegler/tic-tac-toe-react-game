@@ -22,21 +22,11 @@ function App() {
     position: "",
     isGameOver: false,
   })
-  // const [playerMovesArray, setPlayerMovesArray] = useState(emptyArray);
-  // const [position, setPosition] = useState(1);
-  // const [gamePiece, setGamePiece] = useState("X");
-  // const [isGameOver, setIsGameOver] = useState(false);
-  // let [computerThinking, setComputerThinking] = useState(false);
+  
   let computerThinking = false;
-  /* 
-  // 
-  */
+  
  function handleGameResetSubmit() {
   console.log("Game Reset");
-  // setPlayerMovesArray(initArray([]));
-  // setGamePiece("X");
-  // setPosition("");
-  // setIsGameOver(false);
   setGameState(({
     playerMovesArray: initArray([]),
     gamePiece: "X",
@@ -88,7 +78,7 @@ function App() {
   
   function makeComputerMove(newArray, tempToken) {
     computerThinking = true;
-      // while computerThinking true calculate positions?
+      // while computerThinking true calculate positions
       let index;
       while (computerThinking) {
         // computer chooses a random position
@@ -96,8 +86,7 @@ function App() {
         console.log(index);
         // index = position;
         // simulate computer thinking
-        setTimeout(100);
-
+        setTimeout(1000);
         //check if position is empty 
         console.log("computer choice: ",newArray[index])
         if (newArray[index] === "-") {
@@ -174,7 +163,6 @@ function App() {
       return;
     } else{
       // O players turn (computer)
-      // TODO: remove and then reuse the position variable
       newArray = makeComputerMove(newArray, tempToken);
     } 
     // setPlayerMovesArray(newArray);
@@ -209,9 +197,6 @@ function App() {
       <GameBoard playerMovesArray={gameState.playerMovesArray}/>
       {(!gameState.isGameOver) ? 
         <PlayerConsole 
-        // gamePiece={gamePiece}
-        // position={position}
-        // setPosition={setPosition}
         gameState={gameState}
         setGameState={setGameState}
         computerThinking={computerThinking}
