@@ -1,0 +1,8 @@
+@import url('https://fonts.googleapis.com/css2?family=Schoolbell&display=swap'); /* For Schoolbell */
+
+
+h1{
+  text-align: center;
+  color: #001f3f;
+  font-family: 'Schoolbell', cursive;
+}

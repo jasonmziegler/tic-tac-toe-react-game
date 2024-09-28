@@ -1,4 +1,6 @@
 import { useState } from "react";
+import './index.css';
+import './App.css';
 
 import Header from "./components/Header";
 import GameBoard from "./components/GameBoard";
@@ -84,7 +86,6 @@ function App() {
         // computer chooses a random position
         index = Math.floor(Math.random() * 9);
         console.log(index);
-        // index = position;
         // simulate computer thinking
         setTimeout(1000);
         //check if position is empty 
@@ -194,17 +195,19 @@ function App() {
   return (
     <div className="App">
       <Header />
-      <GameBoard playerMovesArray={gameState.playerMovesArray}/>
-      {(!gameState.isGameOver) ? 
-        <PlayerConsole 
-        gameState={gameState}
-        setGameState={setGameState}
-        computerThinking={computerThinking}
-        handleSubmit={handleSubmit}
-        />
-      : 
-        <GameOver handleGameResetSubmit={handleGameResetSubmit} />
-      }
+      <main>
+        <GameBoard playerMovesArray={gameState.playerMovesArray}/>
+        {(!gameState.isGameOver) ? 
+          <PlayerConsole 
+          gameState={gameState}
+          setGameState={setGameState}
+          computerThinking={computerThinking}
+          handleSubmit={handleSubmit}
+          />
+        : 
+          <GameOver handleGameResetSubmit={handleGameResetSubmit} />
+        }
+      </main>
     </div>
   );
 }
