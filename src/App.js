@@ -37,7 +37,9 @@ function App() {
   }));
  }
 
-  function isWinner(currentPlayer, movesArray) {
+  function isWinner(currentPlayer) {
+
+    let movesArray = gameState.playerMovesArray;
     if (movesArray[0] === currentPlayer && movesArray[1] === currentPlayer && movesArray[2] ===currentPlayer) {
       //top row win
       console.log("top row win");
@@ -74,10 +76,31 @@ function App() {
       return false;
     }
   }
-  function isBoardFull(moveArray) {
-    return(!moveArray.includes("-"));
+
+  function isCellEmpty(index) {
+    return (gameState.playerMovesArray[index] === "-") ?  true :  false;
+  }
+  function isBoardFull() {
+    return(!gameState.playerMovesArray.includes("-"));
   }
   
+  function updateCell(index) {
+    //
+    let newArray = [...gameState.playerMovesArray];
+
+    newArray[index] = gameState.gamePiece;
+    
+    setGameState(prevState => ({
+      ...prevState,
+      playerMovesArray: newArray,
+    }));
+  }
+  function switchPlayers(tempToken) {
+    setGameState(prevState=>({
+      ...prevState,
+      gamePiece: tempToken === "X" ? "O" : "X",
+    }))
+  }
   function makeComputerMove(newArray, tempToken) {
     computerThinking = true;
       // while computerThinking true calculate positions
@@ -100,9 +123,46 @@ function App() {
       return newArray;
   }
 
+  function handeCellClick(input) {
+    console.log(input);
+    if (isCellEmpty(input)) {
+      updateCell(input);
+      if (isWinner(gameState.gamePiece)) {
+        // declare winner
+        // console.log(`${gameState.gamePiece} wins!`);
+        let winningMessage = `${gameState.gamePiece} wins!`;
+        console.log(winningMessage);
+        setGameState(prevState => ({
+          ...prevState,
+          isGameOver: true,
+        }));
+        alert(winningMessage);
+        return;
+      } else if (isBoardFull()) {
+        // declare Cat's Game
+        // console.log("Cat's Game");
+        let message = "Board is Full, Cat's Game";
+        console.log(message);
+        // setIsGameOver(true);
+        setGameState(prevState => ({
+          prevState,
+          isGameOver: true,
+        }));
+        alert(message);
+        return;
+      }
+      switchPlayers(gameState.gamePiece);
+    } else {
+      console.log("Space Taken");
+      alert("Space taken, please choose and empty space.");
+    };
+  }
+
   function handleSubmit(e) {
     e.preventDefault();
     let input = gameState.position.trim();
+    // console.log(e);
+    // let input = e -1;
     // check for valid input
     if (isNaN(input) )
       if (input < 0 || input > 8 ) {
@@ -185,6 +245,17 @@ function App() {
       return;
     };
     // setGamePiece(tempToken === "X" ? "O" : "X"); 
+    if (isBoardFull(newArray)) {
+      let message = "Board is Full, Cat's Game";
+      console.log(message);
+      // setIsGameOver(true);
+      setGameState(prevState => ({
+        prevState,
+        isGameOver: true,
+      }));
+      alert(message);
+      return;
+    }
     setGameState(prevState=>({
       ...prevState,
       gamePiece: tempToken === "X" ? "O" : "X",
@@ -196,7 +267,9 @@ function App() {
     <div className="App">
       <Header />
       <main>
-        <GameBoard playerMovesArray={gameState.playerMovesArray}/>
+        <GameBoard 
+        playerMovesArray={gameState.playerMovesArray}
+        onCellClick={handeCellClick}/>
         {(!gameState.isGameOver) ? 
           <PlayerConsole 
           gameState={gameState}
