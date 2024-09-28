@@ -24,7 +24,8 @@ function App() {
     position: "",
     isGameOver: false,
   })
-  
+ 
+  // const [ messageLog, setMessageLog ] = useState([]);
   let computerThinking = false;
   
  function handleGameResetSubmit() {
@@ -37,9 +38,9 @@ function App() {
   }));
  }
 
-  function isWinner(currentPlayer) {
+  function isWinner(currentPlayer, updatedArray) {
 
-    let movesArray = gameState.playerMovesArray;
+    let movesArray = updatedArray;
     if (movesArray[0] === currentPlayer && movesArray[1] === currentPlayer && movesArray[2] ===currentPlayer) {
       //top row win
       console.log("top row win");
@@ -80,8 +81,8 @@ function App() {
   function isCellEmpty(index) {
     return (gameState.playerMovesArray[index] === "-") ?  true :  false;
   }
-  function isBoardFull() {
-    return(!gameState.playerMovesArray.includes("-"));
+  function isBoardFull(updatedArray) {
+    return(!updatedArray.includes("-"));
   }
   
   function updateCell(index) {
@@ -90,16 +91,10 @@ function App() {
 
     newArray[index] = gameState.gamePiece;
     
-    setGameState(prevState => ({
-      ...prevState,
-      playerMovesArray: newArray,
-    }));
+    return newArray;
   }
   function switchPlayers(tempToken) {
-    setGameState(prevState=>({
-      ...prevState,
-      gamePiece: tempToken === "X" ? "O" : "X",
-    }))
+    return tempToken === "X" ? "O" : "X";
   }
   function makeComputerMove(newArray, tempToken) {
     computerThinking = true;
@@ -125,142 +120,148 @@ function App() {
 
   function handeCellClick(input) {
     console.log(input);
+    let message = "";
     if (isCellEmpty(input)) {
-      updateCell(input);
-      if (isWinner(gameState.gamePiece)) {
-        // declare winner
+      const updatedArray = updateCell(input);
+      let newGamePiece = gameState.gamePiece;
+      let isGameOver = false;
+      //check for winner
+      if (isWinner(newGamePiece, updatedArray)) {
         // console.log(`${gameState.gamePiece} wins!`);
-        let winningMessage = `${gameState.gamePiece} wins!`;
-        console.log(winningMessage);
-        setGameState(prevState => ({
-          ...prevState,
-          isGameOver: true,
-        }));
-        alert(winningMessage);
-        return;
-      } else if (isBoardFull()) {
+        message = `${newGamePiece} wins!`;
+        // declare winner
+        isGameOver =  true;
+      } else if (isBoardFull(updatedArray)) { // else if check board full
         // declare Cat's Game
-        // console.log("Cat's Game");
-        let message = "Board is Full, Cat's Game";
-        console.log(message);
-        // setIsGameOver(true);
-        setGameState(prevState => ({
-          prevState,
-          isGameOver: true,
-        }));
-        alert(message);
-        return;
+        message = "Board is Full, Cat's Game";
+        // alert(message);
+        // console.log(message);
+        isGameOver = true;
+      } else {
+        // else switch players
+        newGamePiece = switchPlayers(newGamePiece);
       }
-      switchPlayers(gameState.gamePiece);
+      // set state all at once
+      setGameState((prevState) => ({
+          ...prevState,
+          playerMovesArray: updatedArray,
+          gamePiece: newGamePiece,
+          isGameOver: isGameOver,
+        }));
+        if (message !== "") {
+          console.log(message);
+          alert(message);
+        }
     } else {
-      console.log("Space Taken");
-      alert("Space taken, please choose and empty space.");
-    };
+      message = "Space taken, please choose and empty space.";
+      console.log(message);
+      alert(message);
+    }
   }
 
-  function handleSubmit(e) {
-    e.preventDefault();
-    let input = gameState.position.trim();
-    // console.log(e);
-    // let input = e -1;
-    // check for valid input
-    if (isNaN(input) )
-      if (input < 0 || input > 8 ) {
-        alert("Please choose position 1 - 9");
-        // setPosition("");
-        setGameState(prevState => ({
-          ...prevState,
-          position: "",
-        }));       
-        return;
-      }
-    let newArray = [...gameState.playerMovesArray];
-    console.log("Form Submitted, Player played a turn");
-    let index = input - 1;
-    let tempToken = gameState.gamePiece;
-    if (newArray[index] !== "-") {
-      alert("Space taken, please choose and empty space.");
-      // setPosition("");
-      setGameState(prevState => ({
-        ...prevState,
-        position: "",
-      }));
-      return;
-    }
-    // Set X piece on board
-    newArray[index] = tempToken;
-    // setPlayerMovesArray(newArray);
-    setGameState(prevState => ({
-      ...prevState,
-      playerMovesArray: newArray,
-    }))
-    // check if winner
-    if (isWinner(tempToken, newArray)) {
-      let winningMessage = `${tempToken} wins!`;
-      console.log(winningMessage);
-      setGameState(prevState => ({
-        ...prevState,
-        isGameOver: true,
-      }));
-      alert(winningMessage);
-      return;
-    };
-    setGameState(prevState => ({
-      ...prevState,
-      position: "",
-    }))
-    //If no winner switch to next player
-    tempToken = (tempToken === "X") ? "O" : "X";
-    //TODO: this should no longer be necessary as we check for open moves in After X move
-    if (isBoardFull(newArray)) {
-      let message = "Board is Full, Cat's Game";
-      console.log(message);
-      // setIsGameOver(true);
-      setGameState(prevState => ({
-        prevState,
-        isGameOver: true,
-      }));
-      alert(message);
-      return;
-    } else{
-      // O players turn (computer)
-      newArray = makeComputerMove(newArray, tempToken);
-    } 
-    // setPlayerMovesArray(newArray);
-    setGameState(prevState => ({
-      ...prevState,
-      playerMovesArray: newArray,
-    }));
-    // check win condition
-    // check if any valid moves
-    if (isWinner(tempToken, newArray)) {
-      let winningMessage = `${tempToken} wins!`;
-      console.log(winningMessage);
-      // setIsGameOver(true);
-      setGameState(prevState => ({
-        ...prevState,
-        isGameOver: true,
-      }));
-      alert(winningMessage);
-      return;
-    };
-    // setGamePiece(tempToken === "X" ? "O" : "X"); 
-    if (isBoardFull(newArray)) {
-      let message = "Board is Full, Cat's Game";
-      console.log(message);
-      // setIsGameOver(true);
-      setGameState(prevState => ({
-        prevState,
-        isGameOver: true,
-      }));
-      alert(message);
-      return;
-    }
-    setGameState(prevState=>({
-      ...prevState,
-      gamePiece: tempToken === "X" ? "O" : "X",
-    }))
-  }
+  // function handleSubmit(e) {
+  //   e.preventDefault();
+  //   let input = gameState.position.trim();
+  //   // console.log(e);
+  //   // let input = e -1;
+  //   // check for valid input
+  //   if (isNaN(input) )
+  //     if (input < 0 || input > 8 ) {
+  //       alert("Please choose position 1 - 9");
+  //       // setPosition("");
+  //       setGameState(prevState => ({
+  //         ...prevState,
+  //         position: "",
+  //       }));       
+  //       return;
+  //     }
+  //   let newArray = [...gameState.playerMovesArray];
+  //   console.log("Form Submitted, Player played a turn");
+  //   let index = input - 1;
+  //   let tempToken = gameState.gamePiece;
+  //   if (newArray[index] !== "-") {
+  //     alert("Space taken, please choose and empty space.");
+  //     // setPosition("");
+  //     setGameState(prevState => ({
+  //       ...prevState,
+  //       position: "",
+  //     }));
+  //     return;
+  //   }
+  //   // Set X piece on board
+  //   newArray[index] = tempToken;
+  //   // setPlayerMovesArray(newArray);
+  //   setGameState(prevState => ({
+  //     ...prevState,
+  //     playerMovesArray: newArray,
+  //   }))
+  //   // check if winner
+  //   if (isWinner(tempToken, newArray)) {
+  //     let winningMessage = `${tempToken} wins!`;
+  //     console.log(winningMessage);
+  //     setGameState(prevState => ({
+  //       ...prevState,
+  //       isGameOver: true,
+  //     }));
+  //     alert(winningMessage);
+  //     return;
+  //   };
+  //   setGameState(prevState => ({
+  //     ...prevState,
+  //     position: "",
+  //   }))
+  //   //If no winner switch to next player
+  //   tempToken = (tempToken === "X") ? "O" : "X";
+  //   //TODO: this should no longer be necessary as we check for open moves in After X move
+  //   if (isBoardFull(newArray)) {
+  //     let message = "Board is Full, Cat's Game";
+  //     console.log(message);
+  //     // setIsGameOver(true);
+  //     setGameState(prevState => ({
+  //       prevState,
+  //       isGameOver: true,
+  //     }));
+  //     alert(message);
+  //     return;
+  //   } else{
+  //     // O players turn (computer)
+  //     newArray = makeComputerMove(newArray, tempToken);
+  //   } 
+  //   // setPlayerMovesArray(newArray);
+  //   setGameState(prevState => ({
+  //     ...prevState,
+  //     playerMovesArray: newArray,
+  //   }));
+  //   // check win condition
+  //   // check if any valid moves
+  //   if (isWinner(tempToken, newArray)) {
+  //     let winningMessage = `${tempToken} wins!`;
+  //     console.log(winningMessage);
+  //     // setIsGameOver(true);
+  //     setGameState(prevState => ({
+  //       ...prevState,
+  //       isGameOver: true,
+  //     }));
+  //     alert(winningMessage);
+  //     return;
+  //   };
+  //   // setGamePiece(tempToken === "X" ? "O" : "X"); 
+  //   if (isBoardFull(newArray)) {
+  //     let message = "Board is Full, Cat's Game";
+  //     console.log(message);
+  //     // setIsGameOver(true);
+  //     setGameState(prevState => ({
+  //       prevState,
+  //       isGameOver: true,
+  //     }));
+  //     alert(message);
+  //     return;
+  //   }
+  //   setGameState(prevState=>({
+  //     ...prevState,
+  //     gamePiece: tempToken === "X" ? "O" : "X",
+  //   }))
+  // }
 
   
   return (
@@ -275,7 +276,7 @@ function App() {
           gameState={gameState}
           setGameState={setGameState}
           computerThinking={computerThinking}
-          handleSubmit={handleSubmit}
+          // handleSubmit={handleSubmit}
           />
         : 
           <GameOver handleGameResetSubmit={handleGameResetSubmit} />
