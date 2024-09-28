@@ -8,7 +8,9 @@ function PlayerConsole({ gameState, setGameState, computerThinking, handleSubmit
         <form onSubmit={handleSubmit}>
           <label htmlFor="position">Position 1-9</label>
           <input 
-          type="text"
+          type="number"
+          min="1"
+          max="9"
           value={gameState.position}
           id="position"
           onChange={(e) => setGameState(

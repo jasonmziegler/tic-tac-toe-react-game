@@ -91,9 +91,7 @@ function App() {
       // while computerThinking true calculate positions?
       let index;
       while (computerThinking) {
-
-        
-          // computer chooses a random position
+        // computer chooses a random position
         index = Math.floor(Math.random() * 9);
         console.log(index);
         // index = position;
@@ -114,27 +112,22 @@ function App() {
 
   function handleSubmit(e) {
     e.preventDefault();
-    // check if winning board
-    
-    // determine if Cat's Game
-    
+    let input = gameState.position.trim();
+    // check for valid input
+    if (isNaN(input) )
+      if (input < 0 || input > 8 ) {
+        alert("Please choose position 1 - 9");
+        // setPosition("");
+        setGameState(prevState => ({
+          ...prevState,
+          position: "",
+        }));       
+        return;
+      }
     let newArray = [...gameState.playerMovesArray];
     console.log("Form Submitted, Player played a turn");
-    let index = gameState.position - 1;
+    let index = input - 1;
     let tempToken = gameState.gamePiece;
-
-    // check for valid input
-    if (index < 0 || index > 8 ) {
-      alert("Please choose position 1 - 9");
-      // setPosition("");
-      setGameState(prevState => ({
-        ...prevState,
-        position: "",
-      }));
-      
-      return;
-    }
-
     if (newArray[index] !== "-") {
       alert("Space taken, please choose and empty space.");
       // setPosition("");
@@ -144,49 +137,40 @@ function App() {
       }));
       return;
     }
-    
-    // don't need splice can just set array directly with index
-    //newArray.splice(index, 1, gamePiece);
+    // Set X piece on board
     newArray[index] = tempToken;
     // setPlayerMovesArray(newArray);
     setGameState(prevState => ({
       ...prevState,
       playerMovesArray: newArray,
     }))
+    // check if winner
     if (isWinner(tempToken, newArray)) {
       let winningMessage = `${tempToken} wins!`;
       console.log(winningMessage);
-      alert(winningMessage);
-      // setIsGameOver(true);
       setGameState(prevState => ({
         ...prevState,
         isGameOver: true,
-      }))
+      }));
+      alert(winningMessage);
       return;
     };
-    // setPosition("");
     setGameState(prevState => ({
       ...prevState,
       position: "",
     }))
-    // TODO: Consider on setGameState a the end of this function
-    //  check win condition
-    // if no win condition check for valids "Cat's Game"
-    // if open move and no win condition
-    // switch players
-    // setGamePiece(gamePiece === "X" ? "O" : "X";); 
+    //If no winner switch to next player
     tempToken = (tempToken === "X") ? "O" : "X";
-    // How to deal with full array no moves left? array.includes(value)
     //TODO: this should no longer be necessary as we check for open moves in After X move
     if (isBoardFull(newArray)) {
       let message = "Board is Full, Cat's Game";
-      alert(message)
       console.log(message);
       // setIsGameOver(true);
       setGameState(prevState => ({
         prevState,
         isGameOver: true,
       }));
+      alert(message);
       return;
     } else{
       // O players turn (computer)
@@ -203,12 +187,12 @@ function App() {
     if (isWinner(tempToken, newArray)) {
       let winningMessage = `${tempToken} wins!`;
       console.log(winningMessage);
-      alert(winningMessage);
       // setIsGameOver(true);
       setGameState(prevState => ({
-        prevState,
+        ...prevState,
         isGameOver: true,
       }));
+      alert(winningMessage);
       return;
     };
     // setGamePiece(tempToken === "X" ? "O" : "X"); 
