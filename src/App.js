@@ -140,19 +140,11 @@ function App() {
       let updatedArray = updateCell(input);
       let newGamePiece = gameState.gamePiece;
       let isGameOver = false;
-      //check for winner
-      if (isWinner(newGamePiece, updatedArray)) {
-        // console.log(`${gameState.gamePiece} wins!`);
-        message = `${newGamePiece} wins!`;
-        // declare winner
-        isGameOver =  true;
-      } else if (isBoardFull(updatedArray)) { // else if check board full
-        // declare Cat's Game
-        message = "Board is Full, Cat's Game";
-        // alert(message);
-        // console.log(message);
-        isGameOver = true;
-      } else {
+      //check for winner or cat's game
+      let result = isEndGame(updatedArray,newGamePiece);
+      message = result.message;
+      isGameOver = result.isGameOver;
+      if (!isGameOver) {
         // else switch players
         newGamePiece = switchPlayers(newGamePiece);
         // computer's Move
@@ -160,6 +152,9 @@ function App() {
         let result = isEndGame(updatedArray,newGamePiece);
         message = result.message;
         isGameOver = result.isGameOver;
+        if (!isGameOver) {
+          newGamePiece = switchPlayers(newGamePiece);
+        }
       }
       // set state all at once
       setGameState((prevState) => ({
