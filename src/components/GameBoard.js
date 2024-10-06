@@ -12,7 +12,7 @@ function GameBoard({playerMovesArray, onCellClick}) {
         {/* <p>{row1}</p>
         <p>{row2}</p>
         <p>{row3}</p> */}
-
+        {/* TODO: Make board non clickablie if isGameOver true */}
         {playerMovesArray.map((cellValue, index) => (
           <div
           key={index}
